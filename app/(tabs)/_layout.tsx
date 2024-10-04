@@ -1,37 +1,55 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
+import React, { FC } from 'react';
+import { tabsData } from '@/utils';
+import { BlurView } from 'expo-blur';
+import { StyleSheet } from 'react-native';
 
-import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+interface ITabIcon {
+  focused: boolean;
+  icon: React.ElementType;
+  iconName: string;
+}
+
+const TabIcon: FC<ITabIcon> = ({ focused, icon: Icon, iconName }) => {
+  return (
+    <Icon name={iconName} color={focused ? '#FA2E46' : '#808080'} size={26} />
+  );
+};
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: '#FA2E46',
         headerShown: false,
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
-          ),
-        }}
-      />
+        tabBarBackground: () => (
+          <BlurView
+            intensity={95}
+            style={{ ...StyleSheet.absoluteFillObject }}
+          />
+        ),
+      }}
+    >
+      {tabsData.map((tab) => (
+        <Tabs.Screen
+          key={tab.screenName}
+          name={tab.screenPath}
+          options={{
+            title: tab.screenName,
+            tabBarStyle: {
+              borderTopWidth: 0,
+              height: 90,
+            },
+            tabBarIcon: ({ focused }) => (
+              <TabIcon
+                focused={focused}
+                icon={tab.icon}
+                iconName={tab.iconName}
+              />
+            ),
+          }}
+        />
+      ))}
     </Tabs>
   );
 }
