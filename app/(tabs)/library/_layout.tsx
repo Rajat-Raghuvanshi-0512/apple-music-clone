@@ -1,18 +1,20 @@
-import { StackScreenWithSearchBar } from '@/constants/layout';
 import { Stack } from 'expo-router';
 
 import React from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const LibraryScreenLayout = () => {
   return (
-    <Stack>
-      <Stack.Screen
-        name="index"
-        options={{
+    <SafeAreaProvider>
+      <Stack
+        screenOptions={{
           headerShown: false,
         }}
-      />
-    </Stack>
+      >
+        <Stack.Screen name="index" />
+        <Stack.Screen name="playlist" />
+      </Stack>
+    </SafeAreaProvider>
   );
 };
 

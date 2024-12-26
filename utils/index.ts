@@ -1,6 +1,9 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
 export const tabsData = [
   {
     screenName: 'Home',
@@ -33,9 +36,6 @@ export const tabsData = [
     iconName: 'search',
   },
 ];
-
-import { ClassValue, clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
 
 export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));

@@ -1,14 +1,18 @@
 // ThreeDots.tsx
+import { cn } from '@/utils';
 import React from 'react';
 import { View } from 'react-native';
 
-const ThreeDots: React.FC = () => {
+const ThreeDots: React.FC<{ className?: string; dotClassName?: string }> = ({
+  className,
+  dotClassName = 'bg-gray-200',
+}) => {
   return (
-    <View className="flex-row gap-x-1 items-center">
+    <View className={cn('flex-row gap-x-1 items-center', className)}>
       {/* Each dot */}
-      <View className="w-1 h-1 bg-gray-200 rounded-full" />
-      <View className="w-1 h-1 bg-gray-200 rounded-full" />
-      <View className="w-1 h-1 bg-gray-200 rounded-full" />
+      <View className={cn('w-1 h-1 rounded-full ', dotClassName)} />
+      <View className={cn('w-1 h-1 rounded-full ', dotClassName)} />
+      <View className={cn('w-1 h-1 rounded-full ', dotClassName)} />
     </View>
   );
 };

@@ -42,7 +42,7 @@ const TrackItem: FC<ITrackItemProps> = ({ track }) => {
             <Text
               numberOfLines={1}
               className={cn(
-                'font-semibold max-w-[90%] text-sm text-gray-400 border-b border-gray-500',
+                'font-semibold max-w-[90%] text-sm text-gray-400',
                 isActiveTrack && ''
               )}
             >
