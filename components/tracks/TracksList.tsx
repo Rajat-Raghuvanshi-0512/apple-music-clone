@@ -14,6 +14,7 @@ const TracksList = () => {
             title: item.title,
             artist: item.artist,
             image: item.artwork,
+            url: item.url,
           }}
           key={item.artwork}
         />

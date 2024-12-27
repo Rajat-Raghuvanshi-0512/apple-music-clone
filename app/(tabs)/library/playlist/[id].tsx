@@ -33,7 +33,7 @@ const PlaylistScreen = () => {
           scrollY.value = event.nativeEvent.contentOffset.y;
         }}
         scrollEventThrottle={56}
-        contentContainerClassName="pb-10"
+        contentContainerClassName="pb-[110px]"
       >
         <View className="p-4 items-center">
           <Animated.Image

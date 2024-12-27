@@ -40,7 +40,6 @@ const Header = ({
     height: HEADER_HEIGHT + 100,
     position: 'absolute' as const,
     top: -100,
-    backgroundColor: 'rgba(10,10,10,0.2)',
   };
 
   return (

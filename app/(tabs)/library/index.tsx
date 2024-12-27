@@ -13,7 +13,7 @@ const LibraryScreen = () => {
     <SafeAreaView className="flex-1">
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerClassName="pb-5"
+        contentContainerClassName="pb-[100px]"
         className="px-5"
       >
         <TouchableOpacity>

@@ -1,21 +1,40 @@
 import { unknownTrackImageUri } from '@/constants/images';
 import { cn } from '@/utils';
 import React, { FC } from 'react';
-import { Image, Text, TouchableHighlight, View } from 'react-native';
+import { Image, TouchableHighlight, View } from 'react-native';
+import { Text } from '../ui/text';
 import ThreeDots from '../ThreeDots';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { playTrack } from '@/store/slices/musicSlice';
 
 interface ITrackItemProps {
   track: {
     title: string;
     artist?: string;
     image?: string;
+    url: string;
+    artwork?: string;
   };
 }
 
 const TrackItem: FC<ITrackItemProps> = ({ track }) => {
-  const isActiveTrack = false;
+  const dispatch = useAppDispatch();
+  const currentTrack = useAppSelector((state) => state.music.currentTrack);
+  const isActiveTrack = currentTrack?.url === track.url;
+
+  const handlePress = () => {
+    dispatch(
+      playTrack({
+        title: track.title,
+        artist: track.artist,
+        image: track.image,
+        url: track.url,
+      })
+    );
+  };
+
   return (
-    <TouchableHighlight>
+    <TouchableHighlight onPress={handlePress}>
       <View className="flex-row items-center gap-4">
         <View>
           <Image
@@ -32,19 +51,13 @@ const TrackItem: FC<ITrackItemProps> = ({ track }) => {
           <View className="flex-[0.9]">
             <Text
               numberOfLines={1}
-              className={cn(
-                'font-semibold text-white text-lg',
-                isActiveTrack && ''
-              )}
+              className={cn('font-semibold text-white text-lg')}
             >
               {track.title}
             </Text>
             <Text
               numberOfLines={1}
-              className={cn(
-                'font-semibold max-w-[90%] text-sm text-gray-400',
-                isActiveTrack && ''
-              )}
+              className={cn('font-semibold max-w-[90%] text-sm text-gray-400')}
             >
               {track.artist ?? 'Unknown artist'}
             </Text>
