@@ -21,7 +21,7 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
   }
 }
 
-rootProject.name = 'apple-music-clone'
+rootProject.name = 'Apple Music Clone'
 
 dependencyResolutionManagement {
   versionCatalogs {

@@ -27,11 +27,27 @@ const initialState: MusicState = {
   currentIndex: -1,
 };
 
+export const initializeAudioPlayback = createAsyncThunk(
+  'music/initializeAudioPlayback',
+  async (_, { dispatch }) => {
+    audioService.setPlaybackStatusCallback((status) => {
+      if (!status.isLoaded) return;
+
+      if (status.didJustFinish) {
+        dispatch(playNextTrack());
+      }
+    });
+  }
+);
+
 export const playTrack = createAsyncThunk(
   'music/playTrack',
-  async (track: Track, { getState }) => {
+  async (track: Track, { getState, dispatch }) => {
     const state = getState() as RootState;
     const index = state.music.queue.findIndex((t) => t.url === track.url);
+
+    // Initialize audio playback if not already done
+    dispatch(initializeAudioPlayback());
 
     await audioService.loadSound(track.url);
     await audioService.playSound();

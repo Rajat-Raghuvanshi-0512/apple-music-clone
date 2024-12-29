@@ -1,21 +1,30 @@
-import { Audio } from 'expo-av';
+import { Audio, AVPlaybackStatus } from 'expo-av';
 
 class AudioService {
   private sound: Audio.Sound | null = null;
+  private onPlaybackStatusUpdate: ((status: AVPlaybackStatus) => void) | null =
+    null;
 
   async loadSound(uri: string) {
     try {
-      // Unload previous sound if exists
       if (this.sound) {
         await this.sound.unloadAsync();
       }
       const { sound } = await Audio.Sound.createAsync(
         { uri },
-        { shouldPlay: false }
+        { shouldPlay: false },
+        this.onPlaybackStatusUpdate ?? undefined
       );
       this.sound = sound;
     } catch (error) {
       console.error('Error loading sound:', error);
+    }
+  }
+
+  setPlaybackStatusCallback(callback: (status: AVPlaybackStatus) => void) {
+    this.onPlaybackStatusUpdate = callback;
+    if (this.sound) {
+      this.sound.setOnPlaybackStatusUpdate(callback);
     }
   }
 
