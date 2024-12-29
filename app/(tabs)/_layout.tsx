@@ -1,9 +1,12 @@
 import { Tabs } from 'expo-router';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { tabsData } from '@/utils';
 import { BlurView } from 'expo-blur';
 import { View } from 'react-native';
 import ActiveMusicBar from '@/components/common/ActiveMusicBar';
+import FullScreenBottomSheet from '@/components/ui/bottom-sheets/FullScreenBottomSheet';
+import { useAppSelector } from '@/store/hooks';
+import PlayerScreen from '@/components/player/PlayerScreen';
 
 interface ITabIcon {
   focused: boolean;
@@ -18,9 +21,14 @@ const TabIcon: FC<ITabIcon> = ({ focused, icon: Icon, iconName }) => {
 };
 
 export default function TabLayout() {
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const { currentTrack } = useAppSelector((state) => state.music);
+
+  const displayImage = currentTrack?.image ?? currentTrack?.artwork;
+
   return (
     <View className="flex-1">
-      <ActiveMusicBar />
+      <ActiveMusicBar setIsBottomSheetOpen={setIsBottomSheetOpen} />
       <Tabs
         screenOptions={{
           tabBarActiveTintColor: '#FA2E46',
@@ -52,6 +60,13 @@ export default function TabLayout() {
           />
         ))}
       </Tabs>
+      <FullScreenBottomSheet
+        isOpen={isBottomSheetOpen}
+        onClose={() => setIsBottomSheetOpen(false)}
+        backgroundImage={displayImage}
+      >
+        <PlayerScreen />
+      </FullScreenBottomSheet>
     </View>
   );
 }

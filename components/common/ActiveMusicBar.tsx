@@ -1,5 +1,5 @@
-import { Platform, View } from 'react-native';
 import React from 'react';
+import { Platform, View } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Image } from '../ui/image';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,21 +10,24 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { togglePlayPause, playNextTrack } from '@/store/slices/musicSlice';
 import ActiveMusicBarSkeleton from './ActiveMusicBarSkeleton';
 import { cn } from '@/utils';
-
-const ActiveMusicBar = () => {
+const ActiveMusicBar = ({
+  setIsBottomSheetOpen,
+}: {
+  setIsBottomSheetOpen: (value: boolean) => void;
+}) => {
   const dispatch = useAppDispatch();
   const { currentTrack, isPlaying, isLoading } = useAppSelector(
     (state) => state.music
   );
 
-  if (!currentTrack) return null;
-  if (isLoading) return <ActiveMusicBarSkeleton />;
-
   const handleNextTrack = () => {
     dispatch(playNextTrack());
   };
 
-  const displayImage = currentTrack.image ?? currentTrack.artwork;
+  const displayImage = currentTrack?.image ?? currentTrack?.artwork;
+
+  if (!currentTrack) return null;
+  if (isLoading) return <ActiveMusicBarSkeleton />;
 
   return (
     <View
@@ -38,7 +41,10 @@ const ActiveMusicBar = () => {
         tint="dark"
         className="h-16 rounded-2xl overflow-hidden bg-black"
       >
-        <View className="flex-1 flex-row items-center justify-between p-3">
+        <Pressable
+          onPress={() => setIsBottomSheetOpen(true)}
+          className="flex-1 flex-row items-center justify-between p-3"
+        >
           <View className="flex-row items-center gap-2">
             <Image
               source={{
@@ -68,7 +74,7 @@ const ActiveMusicBar = () => {
               <Ionicons name="play-forward" size={26} color="white" />
             </Pressable>
           </View>
-        </View>
+        </Pressable>
       </BlurView>
     </View>
   );

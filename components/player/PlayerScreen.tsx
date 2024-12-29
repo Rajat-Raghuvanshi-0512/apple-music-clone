@@ -1,20 +1,22 @@
-import React, { useState } from "react";
-import { View } from "react-native";
-import { Image } from "../ui/image";
-import { Text } from "../ui/text";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { unknownTrackImageUri } from "@/constants/images";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { Pressable } from "../ui/pressable";
-import { togglePlayPause } from "@/store/slices/musicSlice";
-import Slider from "@react-native-community/slider";
-import TrackPlayer, { useProgress } from 'react-native-track-player';
+import React, { useState } from 'react';
+import { TouchableOpacity, View } from 'react-native';
+import { Image } from '../ui/image';
+import { Text } from '../ui/text';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { unknownTrackImageUri } from '@/constants/images';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { Pressable } from '../ui/pressable';
+import {
+  togglePlayPause,
+  playNextTrack,
+  playPreviousTrack,
+} from '@/store/slices/musicSlice';
+import Slider from '@react-native-community/slider';
 
 const PlayerScreen = () => {
   const dispatch = useAppDispatch();
   const { currentTrack, isPlaying } = useAppSelector((state) => state.music);
-  const progress = useProgress();
-  
+
   // Handle slider interaction
   const [isSeeking, setIsSeeking] = useState(false);
   const [seekPosition, setSeekPosition] = useState(0);
@@ -31,26 +33,35 @@ const PlayerScreen = () => {
   const displayImage = currentTrack.image ?? currentTrack.artwork;
 
   return (
-    <View className="flex-1 bg-neutral-800">
+    <View className="flex-1 ">
       {/* Album Art */}
       <View className="px-6 mt-8 items-center justify-center">
         <Image
           source={{ uri: displayImage ?? unknownTrackImageUri }}
-          className="w-full h-80 aspect-square rounded-lg"
+          className={`w-full h-[370px] aspect-square rounded-lg transition-all duration-500 ${
+            isPlaying ? 'scale-100' : 'scale-75'
+          }`}
           alt="album-cover"
         />
       </View>
       {/* Header */}
-      <View className="flex-row justify-between items-center px-4 pt-14 pb-4">
+      <View className="flex-row justify-between items-center px-10 pt-14 pb-4">
         <View>
-          <Text className="text-white text-xl font-semibold">
+          <Text numberOfLines={1} className="text-white text-2xl font-semibold">
             {currentTrack.title}
           </Text>
-          <Text className="text-gray-400 text-lg">
-            {currentTrack.artist ?? "Unknown artist"}
+          <Text numberOfLines={1} className="text-gray-300 text-lg font-medium">
+            {currentTrack.artist ?? 'Unknown artist'}
           </Text>
         </View>
-        <MaterialIcons name="more-horiz" size={24} color="white" />
+        <View className="gap-5 flex-row">
+          <View className="bg-gray-400/40 rounded-full p-1">
+            <MaterialIcons name="star-border" size={20} color="white" />
+          </View>
+          <View className="bg-gray-400/40 rounded-full p-1">
+            <MaterialIcons name="more-horiz" size={20} color="white" />
+          </View>
+        </View>
       </View>
 
       {/* Controls */}
@@ -58,51 +69,59 @@ const PlayerScreen = () => {
         {/* Progress Bar */}
         <Slider
           minimumValue={0}
-          maximumValue={progress.duration}
-          value={isSeeking ? seekPosition : progress.position}
+          maximumValue={100}
+          value={isSeeking ? seekPosition : 0}
           minimumTrackTintColor="#fff"
           maximumTrackTintColor="#4b5563"
           thumbTintColor="#fff"
           onSlidingStart={() => {
             setIsSeeking(true);
-            setSeekPosition(progress.position);
-          }}
-          onValueChange={(value) => {
-            setSeekPosition(value);
-          }}
-          onSlidingComplete={async (value) => {
-            await TrackPlayer.seekTo(value);
-            setIsSeeking(false);
+            setSeekPosition(0);
           }}
         />
         <View className="mb-2">
           <View className="flex-row justify-between px-1">
-            <Text className="text-gray-400">{formatTime(progress.position)}</Text>
-            <Text className="text-gray-400">
-              {formatTime(progress.duration - progress.position)}
-            </Text>
+            <Text className="text-gray-400">{formatTime(0)}</Text>
+            <Text className="text-gray-400">{formatTime(100)}</Text>
           </View>
         </View>
 
         {/* Playback Controls */}
         <View className="flex-row items-center justify-center gap-16 mt-6">
-          <Pressable>
-            <Ionicons name="play-skip-back" size={35} color="white" />
-          </Pressable>
-          <Pressable onPress={() => dispatch(togglePlayPause())}>
+          <TouchableOpacity onPress={() => dispatch(playPreviousTrack())}>
+            <Ionicons name="play-back" size={40} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => dispatch(togglePlayPause())}>
             <Ionicons
-              name={isPlaying ? "pause-circle" : "play-circle"}
-              size={70}
+              name={isPlaying ? 'pause' : 'play'}
+              size={50}
               color="white"
             />
-          </Pressable>
-          <Pressable>
-            <Ionicons name="play-skip-forward" size={35} color="white" />
-          </Pressable>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => dispatch(playNextTrack())}>
+            <Ionicons name="play-forward" size={40} color="white" />
+          </TouchableOpacity>
+        </View>
+        {/* Volume Control */}
+        <View className="px-4 mt-8 flex-row justify-between">
+          <Ionicons name="volume-off" size={20} color="white" />
+          <Slider
+            minimumValue={0}
+            maximumValue={100}
+            value={isSeeking ? seekPosition : 0}
+            minimumTrackTintColor="#fff"
+            maximumTrackTintColor="#4b5563"
+            thumbTintColor="#fff"
+            onSlidingStart={() => {
+              setIsSeeking(true);
+              setSeekPosition(0);
+            }}
+          />
+          <Ionicons name="volume-high" size={20} color="white" />
         </View>
 
         {/* Bottom Controls */}
-        <View className="flex-row justify-between items-center my-8 px-4">
+        <View className="flex-row justify-between items-center my-8 px-20 bottom-0">
           <Pressable>
             <Ionicons name="chatbubble-outline" size={24} color="white" />
           </Pressable>

@@ -76,6 +76,30 @@ export const playNextTrack = createAsyncThunk(
   }
 );
 
+export const playPreviousTrack = createAsyncThunk(
+  'music/playPreviousTrack',
+  async (_, { getState, dispatch }) => {
+    const state = getState() as RootState;
+    // Calculate previous index with wrap-around
+    const previousIndex =
+      state.music.currentIndex === 0
+        ? state.music.queue.length - 1
+        : state.music.currentIndex - 1;
+    const previousTrack = state.music.queue[previousIndex];
+
+    if (previousTrack) {
+      await dispatch(
+        playTrack({
+          ...previousTrack,
+          image: previousTrack.artwork,
+        })
+      );
+    }
+
+    return previousIndex;
+  }
+);
+
 export const togglePlayPause = createAsyncThunk(
   'music/togglePlayPause',
   async (_, { getState }) => {
@@ -113,6 +137,9 @@ export const musicSlice = createSlice({
         state.isPlaying = action.payload;
       })
       .addCase(playNextTrack.fulfilled, (state, action) => {
+        state.currentIndex = action.payload;
+      })
+      .addCase(playPreviousTrack.fulfilled, (state, action) => {
         state.currentIndex = action.payload;
       });
   },

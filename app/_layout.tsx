@@ -17,6 +17,7 @@ import 'expo-dev-client';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { StatusBar } from 'expo-status-bar';
 import { AudioProvider } from '@/components/providers/AudioProvider';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -39,19 +40,31 @@ export default function RootLayout() {
 
   return (
     <Provider store={store}>
-      <GluestackUIProvider mode="dark">
-        <ThemeProvider
-          value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
-        >
-          <AudioProvider>
-            <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="+not-found" />
-            </Stack>
-          </AudioProvider>
-        </ThemeProvider>
-      </GluestackUIProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <GluestackUIProvider mode="dark">
+          <ThemeProvider
+            value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
+          >
+            <AudioProvider>
+              <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="+not-found" />
+                <Stack.Screen
+                  name="player"
+                  options={{
+                    presentation: 'modal',
+                    fullScreenGestureEnabled: true,
+                    animation: 'slide_from_bottom',
+                    headerShown: false,
+                    contentStyle: { backgroundColor: '#000' },
+                  }}
+                />
+              </Stack>
+            </AudioProvider>
+          </ThemeProvider>
+        </GluestackUIProvider>
+      </GestureHandlerRootView>
     </Provider>
   );
 }
