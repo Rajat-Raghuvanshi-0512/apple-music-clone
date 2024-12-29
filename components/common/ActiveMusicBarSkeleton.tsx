@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import React from 'react';
 import { BlurView } from 'expo-blur';
 import Animated, {
@@ -7,6 +7,7 @@ import Animated, {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
+import { cn } from '@/utils';
 
 const ActiveMusicBarSkeleton = () => {
   const animatedStyle = useAnimatedStyle(() => ({
@@ -21,7 +22,12 @@ const ActiveMusicBarSkeleton = () => {
   }));
 
   return (
-    <View className="px-2 absolute bottom-[88px] left-0 right-0 z-50">
+    <View
+      className={cn(
+        'px-2 absolute bottom-[88px] left-0 right-0 z-50',
+        Platform.OS === 'android' && 'bg-black'
+      )}
+    >
       <BlurView
         intensity={80}
         tint="dark"

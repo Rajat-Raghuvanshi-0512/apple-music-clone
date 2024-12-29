@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import React from 'react';
 import { BlurView } from 'expo-blur';
 import { Image } from '../ui/image';
@@ -9,6 +9,7 @@ import { unknownTrackImageUri } from '@/constants/images';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { togglePlayPause, playNextTrack } from '@/store/slices/musicSlice';
 import ActiveMusicBarSkeleton from './ActiveMusicBarSkeleton';
+import { cn } from '@/utils';
 
 const ActiveMusicBar = () => {
   const dispatch = useAppDispatch();
@@ -26,7 +27,12 @@ const ActiveMusicBar = () => {
   const displayImage = currentTrack.image ?? currentTrack.artwork;
 
   return (
-    <View className="px-2 absolute bottom-[88px] left-0 right-0 z-50">
+    <View
+      className={cn(
+        'px-2 absolute bottom-[88px] left-0 right-0 z-50',
+        Platform.OS === 'android' && 'bg-black'
+      )}
+    >
       <BlurView
         intensity={80}
         tint="dark"
